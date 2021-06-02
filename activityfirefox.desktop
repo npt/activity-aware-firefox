@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Network;WebBrowser;
+Comment[sl_SI]=
+Comment=
+Exec=env UBUNTU_MENUPROXY=0 /home/hook/.local/bin/activityfirefox %u
+GenericName[sl_SI]=Activity-aware web browser
+GenericName=Activity-aware web browser
+Icon=firefox
+InitialPreference=10
+MimeType=text/html;application/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;
+Name[sl_SI]=Activity-aware Firefox
+Name=Activity-aware Firefox
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

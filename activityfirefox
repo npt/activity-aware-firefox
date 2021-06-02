@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Compatability for Firefox and KDE Plasma Activities
+# 
+# For best results do also this:
+# 
+# sudo rm /usr/bin/firefox
+# sudo ln -s {$path_to_this_script} /usr/bin/firefox
+
+ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
+FF_FOLDER=$"$HOME/.mozilla/firefox"
+DEF_PROF=$"$FF_FOLDER/????????.default-release"
+NEW_PROF=$"$FF_FOLDER/????????.$ACTIVITY"
+
+if [ -d $FF_FOLDER/????????.$ACTIVITY ];
+then
+        exec /usr/lib/firefox/firefox -P $ACTIVITY "$@" &
+		echo ">>> zagnal obstoječ profil $ACTIVITY"
+
+else
+        /usr/lib/firefox/firefox --createprofile $ACTIVITY
+		echo ">>> naredil nov profil $ACTIVITY"
+        cp -a $DEF_PROF/chrome $NEW_PROF/
+		echo ">>> skopiral nastavitve, da skrije tab row"
+        exec /usr/lib/firefox/firefox -P $ACTIVITY "$@" &
+		echo ">>> zagnal nov profil $ACTIVITY"
+
+fi
+
+exit
