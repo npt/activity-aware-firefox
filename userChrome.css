@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: CC0-1.0
+ * SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>
+ */
+
 /* Hides top tabs toolbar, so Tree Style Tabs are the only tabs available */
 #TabsToolbar {
     visibility: collapse !important;

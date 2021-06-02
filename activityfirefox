@@ -1,7 +1,10 @@
 #!/bin/bash
 #
 # Compatability for Firefox and KDE Plasma Activities
-# 
+#
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>
+
 
 ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
 FF_FOLDER=$"$HOME/.mozilla/firefox"
