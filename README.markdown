@@ -5,6 +5,7 @@ SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>
 
 # Activity-aware Firefox
 
+[![REUSE status](https://api.reuse.software/badge/gitlab.com/hook/activity-aware-firefox)](https://api.reuse.software/info/gitlab.com/hook/activity-aware-firefox)
 
 ## Problem
 
