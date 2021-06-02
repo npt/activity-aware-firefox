@@ -38,6 +38,8 @@ In my case, I saved it to `~/.local/bin/activityfirefox` and have that folder in
 
 E.g. in [Fish shell][fish], this is what I did:
 
+[fish]: https://fishshell.com/
+
 ```fish
 git clone https://gitlab.com/hook/activity-aware-firefox.git
 mkdir -p ~/.local/bin/
@@ -78,6 +80,7 @@ As a consequence, syncing everything through Firefox Sync can take some time whe
 [sync]: https://www.mozilla.org/en-US/firefox/sync/
 [ff_stop]: https://searchfox.org/mozilla-central/source/dom/ipc/ContentParent.h#1490
 
+
 # Specifics for different use-cases
 
 
@@ -100,6 +103,10 @@ If I find a safe way to clean up in an automated way, I will add it.
 If you want to more easily identify which Firefox window belongs to which Plasma Activity, you can use the [Window Titler add-on][wt] to change the names of Firefox windows.
 
 [wt]: https://addons.mozilla.org/en-GB/firefox/addon/window-titler/
+
+Apparently it should be possible to do this through the Desktop as well using [Native Messaging WebExtension][native_messaging], but that is beyond my skills.
+
+[native_messaging]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging
 
 
 ## Tree Style Tab
@@ -142,5 +149,13 @@ Some more complex add-ons that make use of local storage – e.g. [Worldbrain’
 [memex]: https://getmemex.com/
 
 
-# Previous work & further reading
+# Inspiration & further reading
 
+This is where I pulled inspiration from to create this script.
+
+- <https://yuenhoe.com/blog/2012/08/associating-firefox-profiles-with-kde-activities/>
+- <https://cukic.co/2016/02/08/heavy-activities-setup/>
+- <https://bbs.archlinux.org/viewtopic.php?id=137941>
+- <https://adrian15sgd.wordpress.com/2012/12/16/soporte-de-actividades-para-firefox/>
+
+I would also like to thank the official `general:mozilla.org` Mozilla Matrix channel, Ivan Čukić, Kai Uwe Broulik, and Lim Yuen Hoe for all their help. 
