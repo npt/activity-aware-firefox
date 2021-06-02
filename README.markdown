@@ -19,7 +19,7 @@ There are several pain points in this combination out of the box, including:
 - when resuming a stopped Activity with Firefox in it, it would sometimes spawn other Firefox windows that are not related to that Activity
 - in general Firefox windows tend to move around Activities where you do not expect them to be
 
-This 
+This small script tries to work around those limitations.
 
 [firefox]: https://getfirefox.org
 [plasma]: https://kde.org/plasma-desktop/
