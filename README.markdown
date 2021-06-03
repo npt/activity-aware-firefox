@@ -118,6 +118,8 @@ With Firefox Sync you can decide (per Profile/device) which of the following you
 - add-ons
 - preferences – not all preferences are synced though, as some are deemed too specific to be safely synced
 
+If you use Firefox Sync, it makes sense to rename each “device”, so you know which Profile is which. A good option is to include the Activity name and the machine name.
+
 One way of achieving something similar locally would be to carefully copy the contents of the default profile’s folder into the new profile’s folder. But that is not advised, because there are many things that are profile-specific, so if you do that, things tend to break.
 
 
@@ -155,7 +157,7 @@ Although the `chrome/` folder is copied when you first run this script, since Fi
 
 If you want to send whole branches of tabs to a different Firefox Profile (in our case: a Firefox window in a different Plasma Activity), you should head out to `about:addons` ↦ _Tree Style Tab_ ↦ _Preferences_ ↦ _Context Menu_ ↦ _Send Tabs to Other Devices with the context menu via Firefox Sync_ and follow the instructions there.
 
-You will need to do this for every Profile that you want to tab trees to and from.
+You will need to do this for every Profile that you want to tab trees to and from, as unfortunately this add-on does not see the device names of Firefox Sync.
 
 
 ## Firefox Multi-Account Containers
