@@ -63,13 +63,13 @@ cp activity-aware-firefox/activityfirefox.desktop ~/.local/share/applications/
 And finally, make sure that Plasma uses your new ”Activity-aware Firefox” as the default browser:
 
 - open _System Settings_
-- either search for “browser” or navigate manually to: _Personalisation_ ↦ _Applications_ ↦ _Default _Applications_
+- either search for “browser” or navigate manually to: _Personalisation_ ↦ _Applications_ ↦ _Default Applications_
 - and there under _Web Browser_ select the new entry called “Activity-aware Firefox”
 
 
 # Running
 
-From that point onward, just use the “Activity-aware Firefox” browser as your broser of choice and be happy about it :)
+From this point onward, just use the “Activity-aware Firefox” browser as your broser of choice and be happy about it :)
 
 
 # Caveats
@@ -79,9 +79,9 @@ There are some caveats, of course:
 The biggest annoyance is that due to the fact that [Firefox kills itself if it has been sleeping for a certain period of time][ff_stop] after receiving e.g. `SIGSTOP`, if you resume a stopped Activity, Firefox will start with the default profile. You need to close that window and simply start “Activity-aware Firefox” and it will come back as expected.
 
 
-A limitation of this script is that add-ons, bookmarks, settings, etc. are _not_ copied (except for `chrome/`) – I suggest using [Firefox Sync][sync] to sync all of this between Firefox Profiles. This is in order
+A limitation of this script is that add-ons, bookmarks, settings, etc. are _not_ copied (except for `chrome/`) – I suggest using [Firefox Sync][sync] to sync all of this between Firefox Profiles. This is is also needed if you want to move tabs between Profiles/Activities.
 
-As a consequence, syncing everything through Firefox Sync can take some time when you run the “Activity-aware Firefox” in a new Plasma Activity for the first time.
+Syncing everything through Firefox Sync can take some time when you run the “Activity-aware Firefox” in a new Plasma Activity for the first time – depending on how much stuff you sync, of course.
 
 [sync]: https://www.mozilla.org/en-US/firefox/sync/
 [ff_stop]: https://searchfox.org/mozilla-central/source/dom/ipc/ContentParent.h#1490
@@ -102,6 +102,23 @@ You can find the exact folder by going through the menu _Help_ ↦ _More Trouble
 After you stop using some Plasma Activities and as such the Firefox Profiles, you may be left with Profiles staying around. You can use `firefox --ProfileManager` to manage your existing Profiles, including removing them.
 
 If I find a safe way to clean up in an automated way, I will add it.
+
+
+## Firefox Sync
+
+If you want to make sure the new Firefox Profiles look similar to each other, you might want to 
+
+With Firefox Sync you can decide (per Profile/device) which of the following you want to sync:
+
+- bookmarks
+- history
+- open tabs – does not auto-sync tabs, but allows you to move tabs between Profiles (and devices)
+- logins and passwords – uses Firefox Lockwise
+- credit card info
+- add-ons
+- preferences – not all preferences are synced though, as some are deemed too specific to be safely synced
+
+One way of achieving something similar locally would be to carefully copy the contents of the default profile’s folder into the new profile’s folder. But that is not advised, because there are many things that are profile-specific, so if you do that, things tend to break.
 
 
 ## Rename Firefox windows to match the Activities
@@ -136,7 +153,9 @@ Although the `chrome/` folder is copied when you first run this script, since Fi
 
 ### Sending groups of tabs to a different Activity
 
-If you want to send whole branches of tabs to a different Firefox Profile (in our case: a Firefox window in a different Plasma Activity), you should head out to `about:addons` #' ↦ ↦ _Tree Style Tab_ ↦ _Preferences_ ↦ _Context Menu_ ↦ _Send Tabs to Other Devices with the context menu via Firefox Sync_ and follow the instructions there.
+If you want to send whole branches of tabs to a different Firefox Profile (in our case: a Firefox window in a different Plasma Activity), you should head out to `about:addons` ↦ _Tree Style Tab_ ↦ _Preferences_ ↦ _Context Menu_ ↦ _Send Tabs to Other Devices with the context menu via Firefox Sync_ and follow the instructions there.
+
+You will need to do this for every Profile that you want to tab trees to and from.
 
 
 ## Firefox Multi-Account Containers
