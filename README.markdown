@@ -152,6 +152,8 @@ Although the `chrome/` folder is copied when you first run this script, since Fi
 - search for `toolkit.legacyUserProfileCustomizations.stylesheets` and enable it
 - restart Firefox, so that change applies
 
+If you still see the top tab-bar, check which your default Profile is. This script assumes the default profile is `**.default-release`, but on certain installations that might be `**.default` instead. if that is the case, change the `DEF_PROF` variable definition accordingly in the script.
+
 
 ### Sending groups of tabs to a different Activity
 
@@ -185,4 +187,4 @@ This is where I pulled inspiration from to create this script.
 - <https://bbs.archlinux.org/viewtopic.php?id=137941>
 - <https://adrian15sgd.wordpress.com/2012/12/16/soporte-de-actividades-para-firefox/>
 
-I would also like to thank the official `general:mozilla.org` Mozilla Matrix channel, Ivan Čukić, Kai Uwe Broulik, and Lim Yuen Hoe for all their help. 
+I would also like to thank the official `#general:mozilla.org` Mozilla Matrix channel, Ivan Čukić, Kai Uwe Broulik, and Lim Yuen Hoe for all their help. 
