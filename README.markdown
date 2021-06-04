@@ -178,6 +178,13 @@ Some more complex add-ons that make use of local storage – e.g. [Worldbrain’
 [memex]: https://getmemex.com/
 
 
+## How to move a vast amount of tabs
+
+If you already have a huge amount of tabs open that you want to migrate to your new Activity-aware Firefox Profiles, I suggest you use the [Bulk URL Opener add-on][bulk].
+
+[bulk]: https://addons.mozilla.org/en-US/firefox/addon/bulkurlopener/
+
+
 # Inspiration & further reading
 
 This is where I pulled inspiration from to create this script.
