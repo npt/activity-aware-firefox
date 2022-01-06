@@ -3,7 +3,7 @@
 # Compatability for Firefox and KDE Plasma Activities
 #
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>
+# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>
 
 
 ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
@@ -21,7 +21,7 @@ if [ ! -d $DEF_PROF ]; then
 	fi
 fi
 ## Template profile if used for copying. Can override to your custom setup
-TMPL_PROF=$DEF_PROF
+TPL_PROF=$DEF_PROF
 ## The profile of the current activity if one has been generated already
 ## ? indicate randomly generated names generate by firefox
 NEW_PROF=$"$FF_FOLDER/????????.$ACTIVITY"
