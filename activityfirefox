@@ -3,58 +3,96 @@
 # Compatability for Firefox and KDE Plasma Activities
 #
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>
+# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 
+## Edit to where the profiles are to be stored and used
+FF_FOLDER="${HOME}/.mozilla/firefox"
+
+
+## Template profile path can be used for copying.
+TPL_PROF="${FF_FOLDER}/????????.template-profile"
+if [ ! -d ${TPL_PROF} ]; then
+	$FF_BIN -CreateProfile "template-profile"
+fi
+TPL_PROF_SIZE="$(du -hs ${TPL_PROF} | cut -f1)B"
 
 ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
-## Activity name if it is preferred to be used
-ACTIVITY_NAME=$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName $ACTIVITY)
-## Edit to where the profiles are to be stored and used
-FF_FOLDER=$"$HOME/.mozilla/firefox"
+## Remove all (but '-') non alphanumeric characters from the activity name, extended with Polish national characters
+ACTIVITY_NAME=$(tr -cd '[:alnum:]ęóąśłżźćńżĘÓĄŚŁŻŹĆŃ-'<<<"$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName ${ACTIVITY})")
+ACTIVITY_ID="${ACTIVITY_NAME}_${ACTIVITY}"
+echo ">>> ${ACTIVITY_ID}"
+
+
 ## Default profile
-DEF_PROF=$"$FF_FOLDER/????????.default-release"
-if [ ! -d $DEF_PROF ]; then
-	DEF_PROF=$"$FF_FOLDER/????????.default"
-	if [ ! -d $DEF_PROF ]; then
+DEF_PROF="${FF_FOLDER}/????????.default-release"
+if [ ! -d ${DEF_PROF} ]; then
+	DEF_PROF="${FF_FOLDER}/????????.default"
+	if [ ! -d ${DEF_PROF} ]; then
 		echo ">>> Could not locate the default profile"
+		kdialog --error "Could not locate the default profile in ${FF_FOLDER} directory"
 		exit 1
 	fi
 fi
-## Template profile if used for copying. Can override to your custom setup
-TPL_PROF=$DEF_PROF
-## The profile of the current activity if one has been generated already
-## ? indicate randomly generated names generate by firefox
-NEW_PROF=$"$FF_FOLDER/????????.$ACTIVITY"
-## Flag for copying all from template profile
-FLAG_COPY_ALL=FALSE
+DEF_PROF_SIZE="$(du -hs ${DEF_PROF} | cut -f1)B"
+
+## Desired profile path of the current activity
+## ? indicate randomly generated firefox names
+NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
 
 FF_BIN=$(which firefox)
-## Not the securest way to check for firefox existence but it does its job
+## Not the most secure way to check for firefox existence but it does its job
 if [ $? -ne 0 ]; then
-	echo ">>> Could not locate the firefox executable"
+	echo ">>> Could not locate firefox executable"
+	kdialog --error "Could not locate firefox executable"
 	exit 1
 fi
 
-if [ -d $NEW_PROF ]; then
-	## A profile is already found
-	exec $FF_BIN --profile $NEW_PROF "$@" &
-	echo ">>> Started an existing profile: $ACTIVITY_NAME"
+## A profile already exist
+if [ -d ${NEW_PROF} ]; then
+	## --profile <path>   Start with profile at <path>.
+	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
+	echo ">>> Started an existing profile: ${ACTIVITY_ID}"
 else
-	## Preferably name the profile as well, but it would bypass firefox's random name generation
-# 	$FF_BIN --createprofile "$ACTIVITY_NAME $FF_FOLDER/????????.$ACTIVITY"
-	$FF_BIN --createprofile $ACTIVITY
-	## TODO: Rename the profile to "Activity-$ACTIVITY_NAME" (Metadata is in $FF_FOLDER/profiles.ini)
-	echo ">>> Created a new profile: $ACTIVITY_NAME"
-	NEW_PROF=$"$FF_FOLDER/????????.$ACTIVITY"
-	if [ $FLAG_COPY_ALL = TRUE ]; then
-		cp -a $TPL_PROF/* $NEW_PROF/
+	#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
+	$FF_BIN -CreateProfile ${ACTIVITY_ID}
+	echo ">>> Created a new profile: ${ACTIVITY_ID}"
+	kdialog --msgbox "Created a new profile: ${ACTIVITY_ID}"
+	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
+	
+	COPY_TYPE=$(kdialog --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)")
+	
+	if [ "${COPY_TYPE}" = "full" ]; then
+		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
+		cp -a ${DEF_PROF}/* ${NEW_PROF}/
+		echo ">>> Copied all from default profile"
+		kdialog --msgbox "Copied all from a default profile."
+	elif [ "${COPY_TYPE}" = "templ" ]; then
+		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
+		cp -a ${TPL_PROF}/* ${NEW_PROF}/
 		echo ">>> Copied all from template profile"
-	elif [ -d $DEF_PROF/chrome ]; then
-		cp -a $DEF_PROF/chrome $NEW_PROF/ # copy any custom user chrome, e.g. needed to hide the top tab-bar
-		echo ">>> Copied user chrome from default profile"
+		kdialog --msgbox "Copied all from template profile."
+	elif [ "${COPY_TYPE}" = "minimal" ]; then
+		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/
+		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/
+		cp ${DEF_PROF}/key4.db ${NEW_PROF}/
+		cp ${DEF_PROF}/logins.json ${NEW_PROF}/
+		cp ${DEF_PROF}/permissions.sqlite ${NEW_PROF}/
+		cp ${DEF_PROF}/search.json.mozlz4 ${NEW_PROF}/
+		cp ${DEF_PROF}/formhistory.sqlite ${NEW_PROF}/
+		cp ${DEF_PROF}/cookies.sqlite ${NEW_PROF}/
+		cp ${DEF_PROF}/cert9.db ${NEW_PROF}/
+		cp ${DEF_PROF}/handlers.json ${NEW_PROF}/
+		echo ">>> Minimal data set copied"
+		kdialog --msgbox "Minimal data set copied."
 	fi
-	exec $FF_BIN --profile $NEW_PROF "$@" &
-	echo ">>> Started the new profile: $ACTIVITY_NAME"
+
+	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
+	echo ">>> Started the new profile: ${ACTIVITY_ID}"
 fi
 
-exit
+exit 0
+
+
+
+
+ 
