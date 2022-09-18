@@ -5,16 +5,73 @@
 # SPDX-License-Identifier: CC0-1.0
 # SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 
+
+
+
+
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
 
+set -x
 
-## Template profile path can be used for copying.
-TPL_PROF="${FF_FOLDER}/????????.template-profile"
-if [ ! -d ${TPL_PROF} ]; then
-	$FF_BIN -CreateProfile "template-profile"
-fi
-TPL_PROF_SIZE="$(du -hs ${TPL_PROF} | cut -f1)B"
+function f_DeleteUnusedProfile()
+{
+	cd "${FF_FOLDER}" || exit
+	for PROFILE_DIR in $(ls -d ????????.*_????????-????-????-????-????????????); do
+		PROFILE_ID=$(cut -f2 -d'_' <<< "${PROFILE_DIR}")
+		PROFILE_NAME=$(cut -f1 -d'_' <<< "${PROFILE_DIR}"| cut -f2 -d'.')
+		ACTIVITY_STATE=$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityState "${PROFILE_ID}")
+		if [ "${ACTIVITY_STATE}" = "0" ];then
+			kdialog --title "Missing Activity" --warningyesno "Activity ${PROFILE_NAME} doesn't exists anymore.\nRemove unused FF profile directory?\n(${PROFILE_DIR})"
+			if [ $? -eq 0 ]; then	# yes
+				if [ $GIO_EXISTS -eq 1 ]; then
+					# move profile dir to trash
+					gio trash "${PROFILE_DIR}" || true
+				else
+					# more direct approach. move profile dir to trash manually
+					mv -f "${FF_FOLDER}/${PROFILE_DIR}" "${HOME}/.local/share/Trash/files"
+				fi
+				# get profile section name with matching "Name" value
+				SECTION_NAME=$(awk '/\[Profile[0-9]*\]/ {label=$0} /Name='${PROFILE_NAME}'_'${PROFILE_ID}'/ {print label}' "${FF_FOLDER}/profiles.ini"|tr -cd '[:alnum:]')
+				# remove section from profiles file
+				if [ "${SECTION_NAME}" != "" ]; then
+					gawk -i inplace '/^\[Profile/{if($0~/\['${SECTION_NAME}'\]/){found=1}else{found=""}} !found' "${FF_FOLDER}/profiles.ini"
+				fi
+			fi
+		fi
+	done
+}
+
+function f_CheckAndPrepare()
+{
+	#check if gio cmd exists on a system
+	GIO_EXISTS=0
+	command -v gio > /dev/null 2>&1
+	if (( $? == 0 )) ; then
+		GIO_EXISTS=1
+	fi
+
+	## Template profile path can be used for profile copying.
+	TPL_PROF="${FF_FOLDER}/????????.template-profile"
+	if [ ! -d ${TPL_PROF} ]; then
+		$FF_BIN -CreateProfile "template-profile"
+	fi
+	TPL_PROF_SIZE="$(du -hs ${TPL_PROF} | cut -f1)B"
+}
+
+function f_FSyncPrepare()
+{
+	ls -l /home/yaro/.mozilla/firefox/
+	ls -l ${NEW_PROF}
+	# new instance reqs a new token or it will be seen as the previous one. re-login is required.
+	mv ${NEW_PROF}/signedInUser.json $(ls -d ${NEW_PROF}/signedInUser.json).old
+	# set new FF sync instance name
+	sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
+}
+
+f_CheckAndPrepare
+f_DeleteUnusedProfile
+
 
 ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
 ## Remove all (but '-') non alphanumeric characters from the activity name, extended with Polish national characters
@@ -56,7 +113,7 @@ else
 	#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
 	$FF_BIN -CreateProfile ${ACTIVITY_ID}
 	echo ">>> Created a new profile: ${ACTIVITY_ID}"
-	kdialog --msgbox "Created a new profile: ${ACTIVITY_ID}"
+	kdialog --msgbox "Created a new profile:\n${ACTIVITY_ID}"
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
 	
 	COPY_TYPE=$(kdialog --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)")
@@ -64,19 +121,13 @@ else
 	if [ "${COPY_TYPE}" = "full" ]; then
 		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
-		# new instance reqs a new token or it will be seen as the previous one. re-login is required.
-		mv ${NEW_PROF}/signedInUser.json ${NEW_PROF}/signedInUser.json.old
-		# set new FF sync instance name
-		sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
+		f_FSyncPrepare
 		echo ">>> Copied all from default profile"
 		kdialog --msgbox "Copied all from a default profile."
 	elif [ "${COPY_TYPE}" = "templ" ]; then
 		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
 		cp -a ${TPL_PROF}/* ${NEW_PROF}/
-		# new FF instance reqs a new token or it will be seen as the previous one. re-login is required.
-		mv ${NEW_PROF}/signedInUser.json ${NEW_PROF}/signedInUser.json.old
-		# set new FF sync instance name
-		sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
+		f_FSyncPrepare
 		echo ">>> Copied all from template profile"
 		kdialog --msgbox "Copied all from template profile."
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
@@ -96,6 +147,7 @@ else
 
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
 	echo ">>> Started the new profile: ${ACTIVITY_ID}"
+	kdialog --msgbox "Please re-login to FF Sync."
 fi
 
 exit 0
