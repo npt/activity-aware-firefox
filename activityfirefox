@@ -12,7 +12,7 @@
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
 
-set -x
+#set -x
 
 function f_DeleteUnusedProfile()
 {
