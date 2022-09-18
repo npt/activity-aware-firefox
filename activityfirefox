@@ -21,7 +21,7 @@ ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActi
 ACTIVITY_NAME=$(tr -cd '[:alnum:]ęóąśłżźćńżĘÓĄŚŁŻŹĆŃ-'<<<"$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName ${ACTIVITY})")
 ACTIVITY_ID="${ACTIVITY_NAME}_${ACTIVITY}"
 echo ">>> ${ACTIVITY_ID}"
-
+FF_SYNC_NAME="${HOSTNAME}-${ACTIVITY_NAME}"
 
 ## Default profile
 DEF_PROF="${FF_FOLDER}/????????.default-release"
@@ -64,11 +64,19 @@ else
 	if [ "${COPY_TYPE}" = "full" ]; then
 		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
+		# new instance reqs a new token or it will be seen as the previous one. re-login is required.
+		mv ${NEW_PROF}/signedInUser.json ${NEW_PROF}/signedInUser.json.old
+		# set new FF sync instance name
+		sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
 		echo ">>> Copied all from default profile"
 		kdialog --msgbox "Copied all from a default profile."
 	elif [ "${COPY_TYPE}" = "templ" ]; then
 		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
 		cp -a ${TPL_PROF}/* ${NEW_PROF}/
+		# new FF instance reqs a new token or it will be seen as the previous one. re-login is required.
+		mv ${NEW_PROF}/signedInUser.json ${NEW_PROF}/signedInUser.json.old
+		# set new FF sync instance name
+		sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
 		echo ">>> Copied all from template profile"
 		kdialog --msgbox "Copied all from template profile."
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
