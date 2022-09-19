@@ -74,8 +74,8 @@ f_DeleteUnusedProfile
 
 
 ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
-## Remove all (but '-') non alphanumeric characters from the activity name, extended with Polish national characters
-ACTIVITY_NAME=$(tr -cd '[:alnum:]ęóąśłżźćńżĘÓĄŚŁŻŹĆŃ-'<<<"$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName ${ACTIVITY})")
+## Remove all (but '-') non alphanumeric characters from the activity name
+ACTIVITY_NAME=$(gawk -v RS='( |[^[:alnum:]-])+' '{printf "%s", sep $0; sep=""}'<<<"$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName ${ACTIVITY})")
 ACTIVITY_ID="${ACTIVITY_NAME}_${ACTIVITY}"
 echo ">>> ${ACTIVITY_ID}"
 FF_SYNC_NAME="${HOSTNAME}-${ACTIVITY_NAME}"
