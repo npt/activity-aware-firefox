@@ -4,9 +4,10 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 # SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
-
-
-
+#
+# Requirements: kdialog
+# Recomended: gio
+#
 
 
 ## Edit to where the profiles are to be stored and used
@@ -44,13 +45,6 @@ function f_DeleteUnusedProfile()
 
 function f_CheckAndPrepare()
 {
-	#check if gio cmd exists on a system
-	GIO_EXISTS=0
-	command -v gio > /dev/null 2>&1
-	if (( $? == 0 )) ; then
-		GIO_EXISTS=1
-	fi
-
 	## Template profile path can be used for profile copying.
 	TPL_PROF="${FF_FOLDER}/????????.template-profile"
 	if [ ! -d ${TPL_PROF} ]; then
@@ -69,6 +63,33 @@ function f_FSyncPrepare()
 	sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
 }
 
+function f_CheckDeps()
+{
+	FF_BIN=$(which firefox)
+	## Not the most secure way to check for firefox existence but it does its job
+	if [ $? -ne 0 ]; then
+		echo ">>> Could not locate firefox executable"
+		${KDIALOG} --error "Could not locate firefox executable"
+		exit 1
+	fi
+
+	#check if gio cmd exists on a system
+	GIO_EXISTS=0
+	command -v gio > /dev/null 2>&1
+	if (( $? == 0 )) ; then
+		GIO_EXISTS=1
+	fi
+
+	#check if kdialog exists on a system
+	command -v kdialog > /dev/null 2>&1
+	if (( $? != 0 )) ; then
+		echo ">>> Error! Requirement kdialog missing. Exiting."
+		notify-send -u critical  -i "firefox" 'Error !!' 'Requirement kdialog missing. Exiting.'
+		exit 1
+	fi
+}
+
+f_CheckDeps
 f_CheckAndPrepare
 f_DeleteUnusedProfile
 
@@ -95,14 +116,6 @@ DEF_PROF_SIZE="$(du -hs ${DEF_PROF} | cut -f1)B"
 ## Desired profile path of the current activity
 ## ? indicate randomly generated firefox names
 NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
-
-FF_BIN=$(which firefox)
-## Not the most secure way to check for firefox existence but it does its job
-if [ $? -ne 0 ]; then
-	echo ">>> Could not locate firefox executable"
-	${KDIALOG} --error "Could not locate firefox executable"
-	exit 1
-fi
 
 ## A profile already exist
 if [ -d ${NEW_PROF} ]; then
@@ -151,8 +164,3 @@ else
 fi
 
 exit 0
-
-
-
-
- 
