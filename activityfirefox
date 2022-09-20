@@ -11,7 +11,7 @@
 
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
-
+KDIALOG="kdialog --icon firefox"
 #set -x
 
 function f_DeleteUnusedProfile()
@@ -22,7 +22,7 @@ function f_DeleteUnusedProfile()
 		PROFILE_NAME=$(cut -f1 -d'_' <<< "${PROFILE_DIR}"| cut -f2 -d'.')
 		ACTIVITY_STATE=$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityState "${PROFILE_ID}")
 		if [ "${ACTIVITY_STATE}" = "0" ];then
-			kdialog --title "Missing Activity" --warningyesno "Activity ${PROFILE_NAME} doesn't exists anymore.\nRemove unused FF profile directory?\n(${PROFILE_DIR})"
+			${KDIALOG} --title "Missing Activity" --warningyesno "Activity ${PROFILE_NAME} doesn't exists anymore.\nRemove unused FF profile directory?\n(${PROFILE_DIR})"
 			if [ $? -eq 0 ]; then	# yes
 				if [ $GIO_EXISTS -eq 1 ]; then
 					# move profile dir to trash
@@ -86,7 +86,7 @@ if [ ! -d ${DEF_PROF} ]; then
 	DEF_PROF="${FF_FOLDER}/????????.default"
 	if [ ! -d ${DEF_PROF} ]; then
 		echo ">>> Could not locate the default profile"
-		kdialog --error "Could not locate the default profile in ${FF_FOLDER} directory"
+		${KDIALOG} --error "Could not locate the default profile in ${FF_FOLDER} directory"
 		exit 1
 	fi
 fi
@@ -100,7 +100,7 @@ FF_BIN=$(which firefox)
 ## Not the most secure way to check for firefox existence but it does its job
 if [ $? -ne 0 ]; then
 	echo ">>> Could not locate firefox executable"
-	kdialog --error "Could not locate firefox executable"
+	${KDIALOG} --error "Could not locate firefox executable"
 	exit 1
 fi
 
@@ -113,23 +113,23 @@ else
 	#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
 	$FF_BIN -CreateProfile ${ACTIVITY_ID}
 	echo ">>> Created a new profile: ${ACTIVITY_ID}"
-	kdialog --msgbox "Created a new profile:\n${ACTIVITY_ID}"
+	${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_ID}"
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
 	
-	COPY_TYPE=$(kdialog --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)")
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)")
 	
 	if [ "${COPY_TYPE}" = "full" ]; then
-		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
+		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
 		f_FSyncPrepare
 		echo ">>> Copied all from default profile"
-		kdialog --msgbox "Copied all from a default profile."
+		${KDIALOG} --msgbox "Copied all from a default profile."
 	elif [ "${COPY_TYPE}" = "templ" ]; then
-		kdialog --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
+		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
 		cp -a ${TPL_PROF}/* ${NEW_PROF}/
 		f_FSyncPrepare
 		echo ">>> Copied all from template profile"
-		kdialog --msgbox "Copied all from template profile."
+		${KDIALOG} --msgbox "Copied all from template profile."
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
 		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/
 		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/
@@ -142,12 +142,12 @@ else
 		cp ${DEF_PROF}/cert9.db ${NEW_PROF}/
 		cp ${DEF_PROF}/handlers.json ${NEW_PROF}/
 		echo ">>> Minimal data set copied"
-		kdialog --msgbox "Minimal data set copied."
+		${KDIALOG} --msgbox "Minimal data set copied."
 	fi
 
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
 	echo ">>> Started the new profile: ${ACTIVITY_ID}"
-	kdialog --msgbox "Please re-login to FF Sync."
+	${KDIALOG} --msgbox "Please re-login to FF Sync."
 fi
 
 exit 0
