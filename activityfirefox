@@ -55,9 +55,9 @@ function f_CheckAndPrepare()
 
 function f_FSyncPrepare()
 {
-	ls -l /home/yaro/.mozilla/firefox/
-	ls -l ${NEW_PROF}
-	# new instance reqs a new token or it will be seen as the previous one. re-login is required.
+	#ls -l ${FF_FOLDER}
+	#ls -l ${NEW_PROF}
+	# new instance reqs a new token otherwise it will be visible as the old one. re-login is required.
 	mv ${NEW_PROF}/signedInUser.json $(ls -d ${NEW_PROF}/signedInUser.json).old
 	# set new FF sync instance name
 	sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
