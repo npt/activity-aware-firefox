@@ -15,6 +15,40 @@ FF_FOLDER="${HOME}/.mozilla/firefox"
 KDIALOG="kdialog --icon firefox"
 #set -x
 
+function f_GenHelp()
+{
+	HELP="Template profile\n
+	----------------\n
+	On it's first run this script created an empty profile called 'Template profile' in ${FF_FOLDER} directory. If you choose 'Template profile' option everything you set up there will be copied to the new activity profile.\n
+	In order to customize 'template profile' start firefox with command:\n
+	firefox --profile ${FF_FOLDER}/????????.template-profile\n
+	\n
+	Full copy\n
+	---------\n
+	This option will copy all data found in the default firefox profile found under '${FF_FOLDER}/????????.default-release' (or alternatively under '${FF_FOLDER}/????????.default'). Please mind it _might_ take a long time and take a lot of disk space.\n
+	\n
+	Minimal\n
+	-------\n
+	This is fastest and most cost-effective method. Only few importent files will be copied over:\n
+	- Bookmarks, Downloads and Browsing History\n
+	- Passwords\n
+	- Site-specific preferences\n
+	- Search engines\n
+	- Personal dictionary\n
+	- Autocomplete history\n
+	- Cookies\n
+	- Security certificate settings\n
+	- Download actions\n
+	- Toolbar customization\n
+	- User preferences\n
+	\n
+	More on this subject: https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data\n
+	\n\n
+	THIS SCRIPT WILL EXIT NOW."
+
+	echo -ne ${HELP} > ${FF_FOLDER}/activityfirefox.help
+}
+
 function f_DeleteUnusedProfile()
 {
 	cd "${FF_FOLDER}" || exit
@@ -89,6 +123,7 @@ function f_CheckDeps()
 	fi
 }
 
+f_GenHelp
 f_CheckDeps
 f_CheckAndPrepare
 f_DeleteUnusedProfile
@@ -123,14 +158,17 @@ if [ -d ${NEW_PROF} ]; then
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
 	echo ">>> Started an existing profile: ${ACTIVITY_ID}"
 else
-	#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
-	$FF_BIN -CreateProfile ${ACTIVITY_ID}
-	echo ">>> Created a new profile: ${ACTIVITY_ID}"
-	${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_ID}"
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)" noop "__________________________________" help "Help")
 	
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)")
-	
+	# do not create a new profile if copy profile wasn't choosen, so it won't be started empty next time
+	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ]; then
+		#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
+		$FF_BIN -CreateProfile ${ACTIVITY_ID}
+		echo ">>> Created a new profile: ${ACTIVITY_ID}"
+		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_ID}"
+	fi
+
 	if [ "${COPY_TYPE}" = "full" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
@@ -144,18 +182,24 @@ else
 		echo ">>> Copied all from template profile"
 		${KDIALOG} --msgbox "Copied all from template profile."
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
-		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/
-		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/
-		cp ${DEF_PROF}/key4.db ${NEW_PROF}/
-		cp ${DEF_PROF}/logins.json ${NEW_PROF}/
-		cp ${DEF_PROF}/permissions.sqlite ${NEW_PROF}/
-		cp ${DEF_PROF}/search.json.mozlz4 ${NEW_PROF}/
-		cp ${DEF_PROF}/formhistory.sqlite ${NEW_PROF}/
-		cp ${DEF_PROF}/cookies.sqlite ${NEW_PROF}/
-		cp ${DEF_PROF}/cert9.db ${NEW_PROF}/
-		cp ${DEF_PROF}/handlers.json ${NEW_PROF}/
+		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/key4.db ${NEW_PROF}/			 2>/dev/null
+		cp ${DEF_PROF}/logins.json ${NEW_PROF}/		 2>/dev/null
+		cp ${DEF_PROF}/permissions.sqlite ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/search.json.mozlz4 ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/formhistory.sqlite ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/cookies.sqlite ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/cert9.db ${NEW_PROF}/		 2>/dev/null
+		cp ${DEF_PROF}/handlers.json ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/xulstore.json ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF}/prefs.js ${NEW_PROF}/		 2>/dev/null
+		cp ${DEF_PROF}/containers.json ${NEW_PROF}/	 2>/dev/null
 		echo ">>> Minimal data set copied"
 		${KDIALOG} --msgbox "Minimal data set copied."
+	elif [ "${COPY_TYPE}" = "help" ]; then
+		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 640
+		exit 0
 	fi
 
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
