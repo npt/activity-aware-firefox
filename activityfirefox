@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: CC0-1.0
 # SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Cristian Le <git@lecris.me>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 #
-# Requirements: kdialog
+# Required: kdialog
 # Recomended: gio
 #
 
