@@ -27,7 +27,7 @@ function f_GenHelp()
 	---------\n
 	This option will copy all data found in the default firefox profile found under '${FF_FOLDER}/????????.default-release' (or alternatively under '${FF_FOLDER}/????????.default'). Please mind it _might_ take a long time and take a lot of disk space.\n
 	\n
-	Please mind that Mozilla developers advise against making full profile copy.\n
+	WARNING: Please mind that Mozilla developers advise against making full profile copy.\n
 	\n
 	Minimal\n
 	-------\n
