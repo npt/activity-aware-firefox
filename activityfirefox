@@ -161,8 +161,8 @@ if [ -d ${NEW_PROF} ]; then
 	echo ">>> Started an existing profile: ${ACTIVITY_ID}"
 else
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" minimal "Minimal (< 3MB)" noop "__________________________________" help "Help")
-	
+	# noop option is used only as a visual separator
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "Create a fresh New profile (0MB)" minimal "Minimal (< 3MB)" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "Help me decide")
 	# do not create a new profile if copy profile wasn't choosen, so it won't be started empty next time
 	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ]; then
 		#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
@@ -199,6 +199,8 @@ else
 		cp ${DEF_PROF}/containers.json ${NEW_PROF}/	 2>/dev/null
 		echo ">>> Minimal data set copied"
 		${KDIALOG} --msgbox "Minimal data set copied."
+	elif [ "${COPY_TYPE}" = "new" ]; then
+		echo ">>> No data need to be copy"
 	elif [ "${COPY_TYPE}" = "help" ]; then
 		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 640
 		exit 0
