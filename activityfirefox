@@ -46,6 +46,11 @@ function f_GenHelp()
 	\n
 	More on this subject: https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data\n
 	\n\n
+	New\n
+	---\n
+	This option will create a fresh new profile without copying anything. This is the fastest method, but you will end up with Firefox default settings, so you might need to manually modify settings yourself.
+	\n\n
+
 	THIS SCRIPT WILL EXIT NOW."
 
 	echo -ne ${HELP} > ${FF_FOLDER}/activityfirefox.help
