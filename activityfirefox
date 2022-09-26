@@ -31,7 +31,7 @@ function f_GenHelp()
 	\n
 	Minimal\n
 	-------\n
-	This is fastest and most cost-effective method. Only few importent files will be copied over:\n
+	This is a good trade-off between convenience and resource usage. Only a few important files will be copied over:\n
 	- Bookmarks, Downloads and Browsing History\n
 	- Passwords\n
 	- Site-specific preferences\n
