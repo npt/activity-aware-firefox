@@ -171,7 +171,7 @@ if [ -d ${NEW_PROF} ]; then
 else
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
 	# noop option is used only as a visual separator
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal (< 3MB)" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "Help me decide")
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
 
 	# cancel. do nothing and exit.
 	if [ $? -eq 1 ]; then
