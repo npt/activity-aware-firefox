@@ -13,7 +13,7 @@
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
 KDIALOG="kdialog --icon firefox"
-
+set +f	# enable wildcard expansion if disabled
 
 if [ "$1" == "-x" ];then
 	set -x
