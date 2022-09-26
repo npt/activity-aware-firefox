@@ -13,7 +13,11 @@
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
 KDIALOG="kdialog --icon firefox"
-#set -x
+
+
+if [ "$1" == "-x" ];then
+	set -x
+fi
 
 function f_GenHelp()
 {
@@ -167,8 +171,14 @@ if [ -d ${NEW_PROF} ]; then
 else
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
 	# noop option is used only as a visual separator
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "Create a fresh New profile (0MB)" minimal "Minimal (< 3MB)" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "Help me decide")
-	# do not create a new profile if copy profile wasn't choosen, so it won't be started empty next time
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal (< 3MB)" templ "Template profile (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "Help me decide")
+
+	# cancel. do nothing and exit.
+	if [ $? -eq 1 ]; then
+		exit 1
+	fi
+
+	# create a new profile only if valid copy option was choosen
 	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ]; then
 		#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
 		$FF_BIN -CreateProfile ${ACTIVITY_ID}
@@ -176,6 +186,7 @@ else
 		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_ID}"
 	fi
 
+	# copy options and help
 	if [ "${COPY_TYPE}" = "full" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
