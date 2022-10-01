@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - added this `CHANGELOG.markdown`
 - improved `README.markdown`, and amongst others, added information regarding Firefox Sync and a tip on how to migrate a huge amount of tabs
 - made the script interactive by adding a dialog (including help) on first launch that assists with starting a new Profile or copying some info from either the default or template Profile – started by [@Cristian_Le][], fixed and much improved by [@Sir_Yaro][]
-- added a function that removes old profiles – started by [@Cristian_Le][] and polished by [@Sir_Yaro][] (see <./README.markdown#clean-up-of-unused-profiles>)
+- added a function that removes old profiles – started by [@Cristian_Le][] and polished by [@Sir_Yaro][] (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 - added desktop notifications – [@Sir_Yaro][]
 - added a depency check for the dialogs and trash – [@Sir_Yaro][]
 - added some files to serve as example for a template Profile
@@ -36,9 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - in general the code is much improved now thanks to [@Cristian_Le][], and [@Sir_Yaro][]
 ### Removed
 ### Deprecated
-- **WARNING:** the improvements change the Profile names drastically, so the Profiles created by 0.2 or 0.1 are not used nor automatically cleaned – they are deprecated but remain untouched (see <./README.markdown#clean-up-of-unused-profiles>)
+- **WARNING:** the improvements change the Profile names drastically, so the Profiles created by 0.2 or 0.1 are not used nor automatically cleaned – they are deprecated but remain untouched (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 ### Fixed
-- [Implement a way to clean up Profiles that are not used anymore](https://gitlab.com/hook/activity-aware-firefox/-/issues/3) – **NB** that you still need to manually purge Profiles that were/are not created by `activityfirefox` or were created by an older version (0.1 or 0.2) of it (see <./README.markdown#clean-up-of-unused-profiles>)
+- [Implement a way to clean up Profiles that are not used anymore](https://gitlab.com/hook/activity-aware-firefox/-/issues/3) – **NB** that you still need to manually purge Profiles that were/are not created by `activityfirefox` or were created by an older version (0.1 or 0.2) of it (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 - [Use a template when starting a new profile/activity](https://gitlab.com/hook/activity-aware-firefox/-/issues/6)
 ### Security
 
