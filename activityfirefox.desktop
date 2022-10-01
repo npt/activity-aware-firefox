@@ -3,16 +3,16 @@
 
 [Desktop Entry]
 Categories=Network;WebBrowser;
-Comment[sl_SI]=
-Comment=
+Comment[sl_SI]=Drži ločen Firefox Profil za vsako Dejavnost
+Comment=Keeps a separate Firefox Profile per each Activity
 Exec=$HOME/.local/bin/activityfirefox %u
-GenericName[sl_SI]=Activity-aware web browser
+GenericName[sl_SI]=Spletni brskalnik, ki razume KDE Dejavnosti
 GenericName[pl_PL]=Przeglądarka wspierająca aktywności KDE
 GenericName=Activity-aware web browser
 Icon=firefox
 InitialPreference=10
 MimeType=text/html;application/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;
-Name[sl_SI]=Activity-aware Firefox
+Name[sl_SI]=Firefox, ki razume Dejavnosti
 Name[pl_PL]=Firefox wspierający aktywności KDE
 Name=Activity-aware Firefox
 Path=
