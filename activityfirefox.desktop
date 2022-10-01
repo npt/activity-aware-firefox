@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>
+# SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 
 [Desktop Entry]
 Categories=Network;WebBrowser;
@@ -7,11 +7,13 @@ Comment[sl_SI]=
 Comment=
 Exec=$HOME/.local/bin/activityfirefox %u
 GenericName[sl_SI]=Activity-aware web browser
+GenericName[pl_PL]=Przeglądarka wspierająca aktywności KDE
 GenericName=Activity-aware web browser
 Icon=firefox
 InitialPreference=10
 MimeType=text/html;application/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;
 Name[sl_SI]=Activity-aware Firefox
+Name[pl_PL]=Firefox wspierający aktywności KDE
 Name=Activity-aware Firefox
 Path=
 StartupNotify=true
@@ -22,4 +24,5 @@ X-DBUS-ServiceName=
 X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-Keywords=web;browser;internet;
+Keywords=Internet;WWW;Browser;Web;Explorer
+Categories=GNOME;GTK;Network;WebBrowser;
