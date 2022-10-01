@@ -7,7 +7,9 @@
 #TabsToolbar {
     visibility: collapse !important;
 }
+
 /* Hides side bar header, so Tree Style Tabs have more space */
+/*
 #sidebar-header {
   visibility: collapse !important;
-} 
+}*/
