@@ -139,13 +139,16 @@ f_CheckDeps
 f_CheckAndPrepare
 f_DeleteUnusedProfile
 
-
-ACTIVITY=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
+ACTIVITY_UUID=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
 ## Remove all (but '-') non alphanumeric characters from the activity name
-ACTIVITY_NAME=$(gawk -v RS='( |[^[:alnum:]-])+' '{printf "%s", sep $0; sep=""}'<<<"$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName ${ACTIVITY})")
-ACTIVITY_ID="${ACTIVITY_NAME}_${ACTIVITY}"
-echo ">>> ${ACTIVITY_ID}"
-FF_SYNC_NAME="${HOSTNAME}-${ACTIVITY_NAME}"
+ACTIVITY_NAME=$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityName "${ACTIVITY_UUID}")
+ACTIVITY_NAME_CURATED=$(gawk -v RS='( |[^[:alnum:]-])+' '{printf "%s", sep $0; sep=""}'<<<"${ACTIVITY_NAME}")
+
+FF_SYNC_NAME="${ACTIVITY_NAME} @ ${HOSTNAME}"
+ACTIVITY_PROFILEDIR="${ACTIVITY_NAME_CURATED}_${ACTIVITY_UUID}"
+echo ">>> ${ACTIVITY_NAME_CURATED}"
+
+
 
 ## Default profile
 DEF_PROF="${FF_FOLDER}/????????.default-release"
@@ -161,15 +164,15 @@ DEF_PROF_SIZE="$(du -hs ${DEF_PROF} | cut -f1)B"
 
 ## Desired profile path of the current activity
 ## ? indicate randomly generated firefox names
-NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
+NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_PROFILEDIR}"
 
 ## A profile already exist
 if [ -d ${NEW_PROF} ]; then
 	## --profile <path>   Start with profile at <path>.
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
-	echo ">>> Started an existing profile: ${ACTIVITY_ID}"
+	echo ">>> Started an existing profile: ${ACTIVITY_PROFILEDIR}"
 else
-	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_ID}"
+	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_PROFILEDIR}"
 	# noop option is used only as a visual separator
 	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
 
@@ -181,9 +184,9 @@ else
 	# create a new profile only if valid copy option was choosen
 	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ]; then
 		#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
-		$FF_BIN -CreateProfile ${ACTIVITY_ID}
-		echo ">>> Created a new profile: ${ACTIVITY_ID}"
-		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_ID}"
+		$FF_BIN -CreateProfile ${ACTIVITY_PROFILEDIR}
+		echo ">>> Created a new profile: ${ACTIVITY_PROFILEDIR}"
+		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_PROFILEDIR}"
 	fi
 
 	# copy options and help
@@ -223,7 +226,7 @@ else
 	fi
 
 	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
-	echo ">>> Started the new profile: ${ACTIVITY_ID}"
+	echo ">>> Started the new profile: ${ACTIVITY_PROFILEDIR}"
 	${KDIALOG} --msgbox "Please re-login to FF Sync."
 fi
 
