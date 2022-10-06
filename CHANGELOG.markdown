@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Removed
 ### Deprecated
 ### Fixed
+- [Use Activity name (instead of number) as Profile name](https://gitlab.com/hook/activity-aware-firefox/-/issues/7)
 ### Security
 
 
