@@ -12,19 +12,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased][]
 
-<!--
+
 ### Added
+- added this `CHANGELOG.markdown`
+- improved `README.markdown`, and amongst others, added information regarding Firefox Sync and a tip on how to migrate a huge amount of tabs
 ### Changed
+- script now automatically changes the Firefox Sync device name to the KDE Plasma Activity name (but it does not really work Firefox itself yet, see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8))
 ### Removed
 ### Deprecated
 ### Fixed
 ### Security
--->
 
-<!-- ## [0.3][] – 2022-10-01 -->
+
+## [0.3][] – 2022-10-01
 ### Added
-- added this `CHANGELOG.markdown`
-- improved `README.markdown`, and amongst others, added information regarding Firefox Sync and a tip on how to migrate a huge amount of tabs
 - made the script interactive by adding a dialog (including help) on first launch that assists with starting a new Profile or copying some info from either the default or template Profile – started by [@Cristian_Le][], fixed and much improved by [@Sir_Yaro][]
 - added a function that removes old profiles – started by [@Cristian_Le][] and polished by [@Sir_Yaro][] (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 - added desktop notifications – [@Sir_Yaro][]
@@ -34,13 +35,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - names of Profiles now include the names of Activities, which makes them much easier to identify
 - in general the code is much improved now thanks to [@Cristian_Le][], and [@Sir_Yaro][]
-### Removed
 ### Deprecated
 - **WARNING:** the improvements change the Profile names drastically, so the Profiles created by 0.2 or 0.1 are not used nor automatically cleaned – they are deprecated but remain untouched (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 ### Fixed
 - [Implement a way to clean up Profiles that are not used anymore](https://gitlab.com/hook/activity-aware-firefox/-/issues/3) – **NB** that you still need to manually purge Profiles that were/are not created by `activityfirefox` or were created by an older version (0.1 or 0.2) of it (see [README](<./README.markdown#clean-up-of-unused-profiles>))
 - [Use a template when starting a new profile/activity](https://gitlab.com/hook/activity-aware-firefox/-/issues/6)
-### Security
 
 
 ## [0.2][] – 2021-06-02
