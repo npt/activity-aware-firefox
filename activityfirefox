@@ -216,13 +216,13 @@ else
 		f_FSyncPrepare
 		echo ">>> Copied all from default profile"
 		${KDIALOG} --msgbox "Copied all from a default profile."
-	# copy options and help from an old (0.1 or 0.2) profile
+	# rename old (0.1 or 0.2) profile to the new naming schema
 	elif [ "${COPY_TYPE}" = "old" ]; then
 		${KDIALOG} --title "Migration in progress" --passivepopup "Moving data to the new profile" 30
 		mv ${OLD_PROF} ${NEW_PROF}
 		f_FSyncPrepare
-		echo ">>> Copied all from this Activity’s old profile"
-		${KDIALOG} --msgbox "Copied all from this Activity’s old profile."
+		echo ">>> Migrated all from this Activity’s old profile"
+		${KDIALOG} --msgbox "Migrated all from this Activity’s old profile."
 	# copy options from the template profile
 	elif [ "${COPY_TYPE}" = "templ" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
