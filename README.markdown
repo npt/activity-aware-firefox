@@ -36,6 +36,13 @@ What `activityfirefox` does is to create a [Firefox Profile][profile] for the Ac
 Then every next time you run `activityfirefox` in that Plasma Activity, it will start the Firefox Profile associated with it.
 
 
+## News
+
+There is a [CHANGELOG](<./CHANGELOG.markdown>) that is maintained  based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+For bigger changes and other news https://matija.suklje.name/introducing-activity-aware-firefox
+
+
 # Installation
 
 Save the `activityfirefox` script to somewhere in your `$PATH`.
@@ -79,8 +86,7 @@ You can copy (or create) settings you want to be present in ever new Activity-aw
 
 On any first run within a new Activity, `activityfirefox` will prompt you whether you want to:
 
-- **Template profile copy** – it will copy everything, and only what is in `~/.mozilla/firefox/????????.template-profile`
-- **Full copy** – This option will copy _all_ data found in the default Firefox Profile. Please mind it _might_ take a long time and take a lot of disk space. **WARNING:** Please note that Mozilla developers advise against making full profile copy!
+- **New** – This option will create a fresh new profile without copying anything. This is the fastest method, but you will end up with Firefox default settings, so you might need to manually modify settings yourself.
 - **Minimal** – This is a good trade-off between convenience and resource usage. Only a few important files will be copied over:
 	- Bookmarks, Downloads and Browsing History
 	- Passwords
@@ -93,7 +99,9 @@ On any first run within a new Activity, `activityfirefox` will prompt you whethe
 	- Download actions
 	- Toolbar customization
 	- User preferences
-- **New** – This option will create a fresh new profile without copying anything. This is the fastest method, but you will end up with Firefox default settings, so you might need to manually modify settings yourself.
+- **Template profile copy** – It will copy everything, and only what is in `~/.mozilla/firefox/????????.template-profile`
+- **Full copy** – This option will copy _all_ data found in the default Firefox Profile. Please mind it _might_ take a long time and take a lot of disk space. **WARNING:** Please note that Mozilla developers advise against making full profile copy!
+- **Migrate from pre-0.3 profile** – Use in case you used `activityfirefox` in its early (0.1 and 0.2) days and want to simply move the old profile into the new one.
 
 More on this subject: <https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data>
 
@@ -101,7 +109,7 @@ More on this subject: <https://support.mozilla.org/en-US/kb/profiles-where-firef
 
 On launch `activityfirefox` will automatically search for any stale Firefox Profiles that it created and which do not have a matching KDE Plasma Activity (anymore, because the Activity was deleted). In that case it will pop up a dialog asking you for confirmation whether you want to delete the unused Profile or not.
 
-**NB:** the script intentionally does not touch any Profiles that were _not_ created by `activityfirefox` or were created by either version 0.2 or 0.1. The best way to clean those out is to manage your existing Profiles through the means of `firefox --ProfileManager`.
+**NB:** the script intentionally does not touch any Profiles that were _not_ created by `activityfirefox`. The best way to clean those out is to manage your existing Profiles through the means of `firefox --ProfileManager`.
 
 
 # Caveats
@@ -114,7 +122,7 @@ A limitation of this script is that add-ons, bookmarks, settings, etc. are _not_
 
 Syncing everything through Firefox Sync can take some time when you run the “Activity-aware Firefox” in a new Plasma Activity for the first time – depending on how much stuff you sync, of course.
 
-On the first run `activityfirefox` asks you what you want to copy (if anything) from the default or template Profile (see [Creating a new Profile](#creating-a-new-profile) above).
+On the first run `activityfirefox` asks you what you want to copy (if anything) from the default or template Profile (see [Creating a new Profile](#creating-a-new-profile) above); or migrate the profile from an old (pre-0.3) version of this script.
 
 [sync]: https://www.mozilla.org/en-US/firefox/sync/
 [ff_stop]: https://searchfox.org/mozilla-central/source/dom/ipc/ContentParent.h#1490

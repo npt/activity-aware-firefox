@@ -18,24 +18,18 @@ set +f	# enable wildcard expansion if disabled
 if [ "$1" == "-x" ];then
 	set -x
 fi
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile (${OLD_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
 
 function f_GenHelp()
 {
-	HELP="Template profile\n
-	----------------\n
-	On it's first run this script created an empty profile called 'Template profile' in ${FF_FOLDER} directory. If you choose 'Template profile' option everything you set up there will be copied to the new activity profile.\n
-	In order to customize 'template profile' start firefox with command:\n
-	firefox --profile ${FF_FOLDER}/????????.template-profile\n
+	HELP="
+	New profile\n
+	-----------\n
+	This option will create a fresh new Firefox Profile without copying anything. This is the fastest method, but you will end up with Firefox default settings, so you might need to manually modify settings yourself.\n
 	\n
-	Full copy\n
-	---------\n
-	This option will copy all data found in the default firefox profile found under '${FF_FOLDER}/????????.default-release' (or alternatively under '${FF_FOLDER}/????????.default'). Please mind it _might_ take a long time and take a lot of disk space.\n
-	\n
-	WARNING: Please mind that Mozilla developers advise against making full profile copy.\n
-	\n
-	Minimal\n
-	-------\n
-	This is a good trade-off between convenience and resource usage. Only a few important files will be copied over:\n
+	Minimal copy\n
+	------------\n
+	This is a good trade-off between convenience and resource usage. Only a few important files will be copied over from your default Firefox Profile:\n
 	- Bookmarks, Downloads and Browsing History\n
 	- Passwords\n
 	- Site-specific preferences\n
@@ -49,12 +43,28 @@ function f_GenHelp()
 	- User preferences\n
 	\n
 	More on this subject: https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data\n
-	\n\n
-	New\n
-	---\n
-	This option will create a fresh new profile without copying anything. This is the fastest method, but you will end up with Firefox default settings, so you might need to manually modify settings yourself.
-	\n\n
-
+	\n
+	Template profile copy\n
+	---------------------\n
+	On its first run this script created an empty profile called 'Template profile' in ${FF_FOLDER} directory. If you choose the 'Template profile copy' option everything you set up there will be copied to the new activity profile.\n
+	In order to customize your 'template profile' from Firefox itself, start it with the following command:\n
+	firefox --profile ${FF_FOLDER}/????????.template-profile\n
+	Alternatively, just copy the files you care about from your default (or other) Firefox Profile into '${FF_FOLDER}/????????.template-profile'.\n
+	\n
+	This is a great option if you know exactly which preferences etc. want to copy that you perhaps cannot sync over Firefox Sync.\n
+	\n
+	Full copy\n
+	---------\n
+	This option will copy all data found in the default Firefox Profile found under '${FF_FOLDER}/????????.default-release' (or alternatively under '${FF_FOLDER}/????????.default'). Please mind it _might_ take a long time and take a lot of disk space.\n
+	\n
+	WARNING: Please mind that Mozilla developers advise against making full profile copy.\n
+	\n
+	Migrate from pre-0.3 profile\n
+	----------------------------\n
+	Choose this option if you have used the 'activityfirefox' script in its early days (any release before 0.3).\n
+	This option will try to identify the Firefox Profile associated with the KDE Plasma Activity you ran the script in and rename the Profile to fit the new schema.\n
+	\n
+	\n
 	THIS SCRIPT WILL EXIT NOW."
 
 	echo -ne ${HELP} > ${FF_FOLDER}/activityfirefox.help
@@ -148,7 +158,17 @@ FF_SYNC_NAME="${ACTIVITY_NAME} @ ${HOSTNAME}"
 ACTIVITY_PROFILEDIR="${ACTIVITY_NAME_CURATED}_${ACTIVITY_UUID}"
 echo ">>> ${ACTIVITY_NAME_CURATED}"
 
-
+## Old profile from 0.1 and 0.2 versions of this script
+OLD_PROF="${FF_FOLDER}/????????.${ACTIVITY_UUID}"
+if [ ! -d ${OLD_PROF} ]; then
+	OLD_PROF="${FF_FOLDER}/????????.default"
+	if [ ! -d ${OLD_PROF} ]; then
+		echo ">>> Could not locate an old (pre-0.3) profile"
+		${KDIALOG} --error "Could not locate an old (pre-0.3) profile in ${FF_FOLDER} directory"
+		exit 1
+	fi
+fi
+OLD_PROF_SIZE="$(du -hs ${OLD_PROF} | cut -f1)B"
 
 ## Default profile
 DEF_PROF="${FF_FOLDER}/????????.default-release"
@@ -174,7 +194,7 @@ if [ -d ${NEW_PROF} ]; then
 else
 	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_PROFILEDIR}"
 	# noop option is used only as a visual separator
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
+	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile (${OLD_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
 
 	# cancel. do nothing and exit.
 	if [ $? -eq 1 ]; then
@@ -189,19 +209,28 @@ else
 		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_PROFILEDIR}"
 	fi
 
-	# copy options and help
+	# copy options and help from the default profile
 	if [ "${COPY_TYPE}" = "full" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
 		cp -a ${DEF_PROF}/* ${NEW_PROF}/
 		f_FSyncPrepare
 		echo ">>> Copied all from default profile"
 		${KDIALOG} --msgbox "Copied all from a default profile."
+	# copy options and help from an old (0.1 or 0.2) profile
+	elif [ "${COPY_TYPE}" = "old" ]; then
+		${KDIALOG} --title "Migration in progress" --passivepopup "Moving data to the new profile" 30
+		mv ${OLD_PROF} ${NEW_PROF}
+		f_FSyncPrepare
+		echo ">>> Copied all from this Activity’s old profile"
+		${KDIALOG} --msgbox "Copied all from this Activity’s old profile."
+	# copy options from the template profile
 	elif [ "${COPY_TYPE}" = "templ" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
 		cp -a ${TPL_PROF}/* ${NEW_PROF}/
 		f_FSyncPrepare
 		echo ">>> Copied all from template profile"
 		${KDIALOG} --msgbox "Copied all from template profile."
+	# copy limited options from the default profile
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
 		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/	 2>/dev/null
 		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/	 2>/dev/null
@@ -218,8 +247,10 @@ else
 		cp ${DEF_PROF}/containers.json ${NEW_PROF}/	 2>/dev/null
 		echo ">>> Minimal data set copied"
 		${KDIALOG} --msgbox "Minimal data set copied."
+	# create empty new profile
 	elif [ "${COPY_TYPE}" = "new" ]; then
 		echo ">>> No data need to be copy"
+	# open up help text
 	elif [ "${COPY_TYPE}" = "help" ]; then
 		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 640
 		exit 0
