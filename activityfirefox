@@ -209,12 +209,9 @@ else
 		OLD_PROF="${FF_FOLDER}/????????.${ACTIVITY_UUID}"
 		OLD_PROF_SIZE="$(du -hs ${OLD_PROF} | cut -f1)B"
 		if [ ! -d ${OLD_PROF} ]; then
-			OLD_PROF="${FF_FOLDER}/????????.default"
-			if [ ! -d ${OLD_PROF} ]; then
-				echo ">>> Could not locate an old (pre-0.3) profile"
-				${KDIALOG} --error "Could not locate an old (pre-0.3) profile in ${FF_FOLDER} directory"
-				exit 1
-			fi
+			echo ">>> Could not locate an old (pre-0.3) profile"
+			${KDIALOG} --error "Could not locate an old (pre-0.3) profile in ${FF_FOLDER} directory"
+			exit 1
 		fi
 		${KDIALOG} --title "Migration in progress" --passivepopup "Moving data to the new profile" 30
 		mv ${OLD_PROF} ${NEW_PROF}
