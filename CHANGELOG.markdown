@@ -16,8 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 - added this `CHANGELOG.markdown`
 - improved `README.markdown`, and amongst others, added information regarding Firefox Sync and a tip on how to migrate a huge amount of tabs
+- added a method to migrate profiles from the old (pre-0.3) versions of this script
 ### Changed
 - script now automatically changes the Firefox Sync device name to the KDE Plasma Activity name (but it does not really work Firefox itself yet, see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8))
+- small changes to the help menu
 - changed the git tags to start with `v` (as is the convention) and included some annotations
 ### Removed
 ### Deprecated
