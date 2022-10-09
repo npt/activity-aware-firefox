@@ -11,21 +11,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Deprecated
+### Fixed
+### Security
 
-
+## [0.4][] – 2022-10-09
 ### Added
 - added this `CHANGELOG.markdown`
 - improved `README.markdown`, and amongst others, added information regarding Firefox Sync and a tip on how to migrate a huge amount of tabs
 - added a method to migrate profiles from the old (pre-0.3) versions of this script
 ### Changed
-- script now automatically changes the Firefox Sync device name to the KDE Plasma Activity name (but it does not really work Firefox itself yet, see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8))
+- script now automatically changes the Firefox Sync device name to the KDE Plasma Activity name (but it does not really work in Firefox itself yet, see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8))
 - small changes to the help menu
 - changed the git tags to start with `v` (as is the convention) and included some annotations
-### Removed
-### Deprecated
 ### Fixed
 - [Use Activity name (instead of number) as Profile name](https://gitlab.com/hook/activity-aware-firefox/-/issues/7)
-### Security
 
 
 ## [0.3][] – 2022-10-01
@@ -65,7 +68,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - an initial and very basic version of this the `activityfirefox` wrapper and its `.desktop` file as descbired in [my first blog post about it](https://matija.suklje.name/introducing-activity-aware-firefox), it gets the job done, but makes a lot of assumptions – by [@hook][]
 
 
-[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.3...HEAD
+[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4...HEAD
+[0.4]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.3...v0.4
 [0.3]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.2...v0.3
 [0.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.1...v0.2
 [0.1]: https://gitlab.com/hook/activity-aware-firefox/-/tree/v0.1

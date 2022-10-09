@@ -40,7 +40,9 @@ Then every next time you run `activityfirefox` in that Plasma Activity, it will 
 
 There is a [CHANGELOG](<./CHANGELOG.markdown>) that is maintained  based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-For bigger changes and other news https://matija.suklje.name/introducing-activity-aware-firefox
+For summaries of bigger changes and other news, Matija Šuklje has a blog series about it, the [first post is here][blog], and any newer will be linked there.
+
+[blog]: https://matija.suklje.name/introducing-activity-aware-firefox
 
 
 # Installation
@@ -148,9 +150,11 @@ With Firefox Sync you can decide (per Profile/device) which of the following you
 - logins and passwords – uses Firefox Lockwise
 - credit card info
 - add-ons
-- preferences – not all preferences are synced though, as some are deemed too specific to be safely synced (to work around this you can also use `user.js`)
+- preferences – not all preferences are synced though, as some are deemed too specific to be safely synced (to work around this you can also use `user.js` or force [tweak your Syncing preferences][tweak_sync])
 
 If you use Firefox Sync, it makes sense to rename each “device”, so you know which Profile is which. A good option is to include the Activity name and the machine name. We are trying to figure out how to automate this step, help is welcome (see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8)).
+
+[tweak_sync]: https://support.mozilla.org/en-US/kb/sync-custom-preferences
 
 
 ## Rename Firefox windows to match the Activities
@@ -164,7 +168,7 @@ Apparently it should be possible to do this through the Desktop as well using [N
 [native_messaging]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging
 
 
-## Tree Style Tab
+## Tree Style Tab / Sidebery
 
 
 ### Hiding the tab row
@@ -188,9 +192,26 @@ If the `*.template-profile/` directory does not exist yet, run `activityfirefox`
 
 ### Sending groups of tabs to a different Activity
 
-If you want to send whole branches of tabs to a different Firefox Profile (in our case: a Firefox window in a different Plasma Activity), you should head out to `about:addons` ↦ _Tree Style Tab_ ↦ _Preferences_ ↦ _Context Menu_ ↦ _Send Tabs to Other Devices with the context menu via Firefox Sync_ and follow the instructions there.
+Since [there is no Web Extension API to send tabs between Firefox Sync devices][no_api], moving whole branches of tabs (in our case: a Firefox window in a different Plasma Activity) relies on different creative work-arounds from different add-ons.
 
-You will need to do this for every Profile that you want to tab trees to and from, as unfortunately this add-on does not see the device names of Firefox Sync.
+In short:
+
+- with **Tree Style Tab** you can send tab branches via Firefox Sync, but needs extra setting-up for each Profile
+- with **Sidebery** you can drag-and-drop tab branches between Profiles (but not via Firefox Sync)
+
+[no_api]: https://bugzilla.mozilla.org/show_bug.cgi?id=1417183
+
+#### Tree Style Tab
+
+Luckily Tree Style Tab have worked around this issue in a way, but you need to manually set the name of the sync device again in the Tree Style Tab settings. To do so head out to `about:addons` ↦ _Tree Style Tab_ ↦ _Preferences_ ↦ _Context Menu_ ↦ _Send Tabs to Other Devices with the context menu via Firefox Sync_ and follow the instructions there.
+
+You will need to do this for every Profile that you want to tab trees to and from, as unfortunately this add-on can not see the device names of Firefox Sync.
+
+#### Sidebery
+
+In Sidebery they [do _not_ support sending tabs through Firefox Sync][no_sync], but in addition to still being able to use Firefox Sync itself to send individual tabs between devices/Profiles, simply drag-and-dropping a tab branch from one window to another works even if the two windows are from a different Profile.
+
+[no_sync]: https://github.com/mbnuqw/sidebery/issues/130
 
 
 ## Firefox Multi-Account Containers
@@ -221,4 +242,4 @@ This is where I pulled inspiration from to create this script.
 - <https://bbs.archlinux.org/viewtopic.php?id=137941>
 - <https://adrian15sgd.wordpress.com/2012/12/16/soporte-de-actividades-para-firefox/>
 
-I would also like to thank the official `#general:mozilla.org` Mozilla Matrix channel, Ivan Čukić, Kai Uwe Broulik, and Lim Yuen Hoe for all their help. 
+I would also like to thank the official `#general:mozilla.org` Mozilla Matrix channel, Ivan Čukić, Kai Uwe Broulik, and Lim Yuen Hoe for all their help with the first version.
