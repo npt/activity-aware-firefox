@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - script now automatically changes the Firefox Sync device name to the KDE Plasma Activity name (but it does not really work Firefox itself yet, see [issue #8](https://gitlab.com/hook/activity-aware-firefox/-/issues/8))
 - small changes to the help menu
+- changed the git tags to start with `v` (as is the convention) and included some annotations
 ### Removed
 ### Deprecated
 ### Fixed
@@ -64,10 +65,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - an initial and very basic version of this the `activityfirefox` wrapper and its `.desktop` file as descbired in [my first blog post about it](https://matija.suklje.name/introducing-activity-aware-firefox), it gets the job done, but makes a lot of assumptions – by [@hook][]
 
 
-[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/0.3...HEAD
-[0.3]: https://gitlab.com/hook/activity-aware-firefox/-/compare/0.2...0.3
-[0.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/0.1...0.2
-[0.1]: https://gitlab.com/hook/activity-aware-firefox/-/tree/0.1
+[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.3...HEAD
+[0.3]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.2...v0.3
+[0.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.1...v0.2
+[0.1]: https://gitlab.com/hook/activity-aware-firefox/-/tree/v0.1
 
 [@Sir_Yaro]: https://gitlab.com/Sir_Yaro
 [@Cristian_Le]: https://gitlab.com/LecrisUT
