@@ -13,6 +13,8 @@
 ## Edit to where the profiles are to be stored and used
 FF_FOLDER="${HOME}/.mozilla/firefox"
 KDIALOG="kdialog --icon firefox"
+W=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f1 -d'x')
+H=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f2 -d'x')
 set +f	# enable wildcard expansion if disabled
 
 if [ "$1" == "-x" ];then
@@ -100,21 +102,25 @@ function f_DeleteUnusedProfile()
 function f_CheckAndPrepare()
 {
 	## Template profile path can be used for profile copying.
-	TPL_PROF="${FF_FOLDER}/????????.template-profile"
-	if [ ! -d ${TPL_PROF} ]; then
+	TPL_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.template-profile")
+	TPL_PROF_PATH="${FF_FOLDER}/${TPL_PROF_DIRNAME}"
+	if [ ! -d ${TPL_PROF_PATH} ]; then
 		$FF_BIN -CreateProfile "template-profile"
 	fi
-	TPL_PROF_SIZE="$(du -hs ${TPL_PROF} | cut -f1)B"
+	TPL_PROF_SIZE="$(du -hs ${TPL_PROF_PATH} | cut -f1)B"
 }
 
 function f_FSyncPrepare()
 {
-	#ls -l ${FF_FOLDER}
-	#ls -l ${NEW_PROF}
+
 	# new instance reqs a new token otherwise it will be visible as the old one. re-login is required.
-	mv ${NEW_PROF}/signedInUser.json $(ls -d ${NEW_PROF}/signedInUser.json).old
+	if [ -f {NEW_PROF_PATH}/signedInUser.json ]; then
+		mv ${NEW_PROF_PATH}/signedInUser.json $(ls -d ${NEW_PROF_PATH}/signedInUser.json).old
+	fi
 	# set new FF sync instance name
-	sed -i 's/user_pref("'identity.fxaccounts.account.device.name'",.*);/user_pref("'identity.fxaccounts.account.device.name'", "'${FF_SYNC_NAME}'");/' ${NEW_PROF}/prefs.js
+	if [ -f ${NEW_PROF_PATH}/prefs.js ]; then
+		sed -i "s/user_pref(\"identity.fxaccounts.account.device.name\",.*);/user_pref(\"identity.fxaccounts.account.device.name\", \"${FF_SYNC_NAME}\");/" ${NEW_PROF_PATH}/prefs.js
+	fi
 }
 
 function f_CheckDeps()
@@ -143,6 +149,16 @@ function f_CheckDeps()
 	fi
 }
 
+function f_GetDirName()
+{
+	if [ -d $1 ]; then 
+		basename $(ls -d $1)
+	else
+		echo "DirectoryNotFound"
+	fi
+}
+
+
 f_GenHelp
 f_CheckDeps
 f_CheckAndPrepare
@@ -154,34 +170,37 @@ ACTIVITY_NAME=$(qdbus org.kde.ActivityManager /ActivityManager/Activities Activi
 ACTIVITY_NAME_CURATED=$(gawk -v RS='( |[^[:alnum:]-])+' '{printf "%s", sep $0; sep=""}'<<<"${ACTIVITY_NAME}")
 
 FF_SYNC_NAME="${ACTIVITY_NAME} @ ${HOSTNAME}"
-ACTIVITY_PROFILEDIR="${ACTIVITY_NAME_CURATED}_${ACTIVITY_UUID}"
+ACTIVITY_PROFILENAME="${ACTIVITY_NAME_CURATED}_${ACTIVITY_UUID}"
 echo ">>> ${ACTIVITY_NAME_CURATED}"
 
 ## Default profile
-DEF_PROF="${FF_FOLDER}/????????.default-release"
-if [ ! -d ${DEF_PROF} ]; then
-	DEF_PROF="${FF_FOLDER}/????????.default"
-	if [ ! -d ${DEF_PROF} ]; then
+DEF_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.default-release")
+DEF_PROF_PATH="${FF_FOLDER}/${DEF_PROF_DIRNAME}"
+
+if [ ! -d ${DEF_PROF_PATH} ]; then
+	DEF_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.default")
+	DEF_PROF_PATH="${FF_FOLDER}/${DEF_PROF_DIRNAME}"
+	if [ ! -d ${DEF_PROF_PATH} ]; then
 		echo ">>> Could not locate the default profile"
 		${KDIALOG} --error "Could not locate the default profile in ${FF_FOLDER} directory"
 		exit 1
 	fi
 fi
-DEF_PROF_SIZE="$(du -hs ${DEF_PROF} | cut -f1)B"
+DEF_PROF_SIZE="$(du -hs ${DEF_PROF_PATH} | cut -f1)B"
 
-## Desired profile path of the current activity
-## ? indicate randomly generated firefox names
-NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_PROFILEDIR}"
+## Desired profile path of the current activity, ???????? indicate randomly generated firefox names
+NEW_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.${ACTIVITY_PROFILENAME}")	# ex: ky10cbmo.test_9936a864-799e-4393-a93c-12c3b980272c 
+NEW_PROF_PATH="${FF_FOLDER}/${NEW_PROF_DIRNAME}"									# ex: /home/XYZ/.mozilla/firefox/ky10cbmo.test_9936a864-799e-4393-a93c-12c3b980272c
 
-## A profile already exist
-if [ -d ${NEW_PROF} ]; then
-	## --profile <path>   Start with profile at <path>.
-	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
-	echo ">>> Started an existing profile: ${ACTIVITY_PROFILEDIR}"
+if [ -d ${NEW_PROF_PATH} ]; then													## A profile already exist
+	exec ${FF_BIN} --profile ${NEW_PROF_PATH} "$@" &								# Start with the profile with the given path. 
+	echo ">>> Started an existing profile: ${ACTIVITY_PROFILENAME}"
 else
-	NEW_PROF="${FF_FOLDER}/????????.${ACTIVITY_PROFILEDIR}"
 	# noop option is used only as a visual separator
-	COPY_TYPE=$(${KDIALOG} --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile (${OLD_PROF_SIZE})" noop "__________________________________" help "[Help me decide]")
+	WINW=320
+	WINH=320
+	GEO="${WINW}x${WINH}+$((${W}/2-${WINW}/2))+$((${H}/2-${WINH}/2))"
+	COPY_TYPE=$(${KDIALOG} --geometry "${GEO}" --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile" noop "__________________________________" help "[Help me decide]")
 
 	# cancel. do nothing and exit.
 	if [ $? -eq 1 ]; then
@@ -189,58 +208,64 @@ else
 	fi
 
 	# create a new profile only if valid copy option was choosen
-	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ]; then
+	if [ "${COPY_TYPE}" != "help" ] && [ "${COPY_TYPE}" != "noop" ] && [ "${COPY_TYPE}" != "old" ]; then
 		#https://wiki.mozilla.org/Firefox/CommandLineOptions#-CreateProfile_profile_name
-		$FF_BIN -CreateProfile ${ACTIVITY_PROFILEDIR}
-		echo ">>> Created a new profile: ${ACTIVITY_PROFILEDIR}"
-		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_PROFILEDIR}"
+		$FF_BIN -CreateProfile ${ACTIVITY_PROFILENAME}
+		NEW_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.${ACTIVITY_PROFILENAME}")						# Find dir again after it being created
+		NEW_PROF_PATH="${FF_FOLDER}/${NEW_PROF_DIRNAME}"
+		echo ">>> Created a new profile: ${ACTIVITY_PROFILENAME}"
+		${KDIALOG} --msgbox "Created a new profile:\n${ACTIVITY_PROFILENAME}"
 	fi
 
 	# copy options and help from the default profile
 	if [ "${COPY_TYPE}" = "full" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 30
-		cp -a ${DEF_PROF}/* ${NEW_PROF}/
+		cp -a ${DEF_PROF_PATH}/* ${NEW_PROF_PATH}/
 		f_FSyncPrepare
 		echo ">>> Copied all from default profile"
 		${KDIALOG} --msgbox "Copied all from a default profile."
 	# rename old (0.1 or 0.2) profile to the new naming schema
 	elif [ "${COPY_TYPE}" = "old" ]; then
-	## Old profile from 0.1 and 0.2 versions of this script
-		OLD_PROF="${FF_FOLDER}/????????.${ACTIVITY_UUID}"
-		OLD_PROF_SIZE="$(du -hs ${OLD_PROF} | cut -f1)B"
-		if [ ! -d ${OLD_PROF} ]; then
+		OLD_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.${ACTIVITY_UUID}")	# ex: ky10cbmo.9936a864-799e-4393-a93c-12c3b980272c 
+		OLD_PROF_PATH="${FF_FOLDER}/${OLD_PROF_DIRNAME}"							# ex: /home/XYZ/.mozilla/firefox/ky10cbmo.9936a864-799e-4393-a93c-12c3b980272c 
+
+		if [ ! -d ${OLD_PROF_PATH} ]; then
 			echo ">>> Could not locate an old (pre-0.3) profile"
 			${KDIALOG} --error "Could not locate an old (pre-0.3) profile in ${FF_FOLDER} directory"
 			exit 1
 		fi
 		${KDIALOG} --title "Migration in progress" --passivepopup "Moving data to the new profile" 30
-		mv ${OLD_PROF} ${NEW_PROF}
-		sed 's/'${OLD_PROF}'/'${NEW_PROF}'/' "${FF_FOLDER}/"profiles.ini
+		NEW_PROF_DIRNAME="$(cut -f1 -d'.' <<< ${OLD_PROF_DIRNAME}).${ACTIVITY_NAME}_${ACTIVITY_UUID}"
+		NEW_PROF_PATH="${FF_FOLDER}/${NEW_PROF_DIRNAME}"
+
+		mv ${OLD_PROF_PATH} ${NEW_PROF_PATH}
+		sed -i 's/'${OLD_PROF_DIRNAME}'/'${NEW_PROF_DIRNAME}'/' "${FF_FOLDER}"/profiles.ini
+		sed -i 's/'=${ACTIVITY_UUID}'/'=${NEW_PROF_DIRNAME}'/' "${FF_FOLDER}"/profiles.ini
 		f_FSyncPrepare
 		echo ">>> Migrated all from this Activity’s old profile"
 		${KDIALOG} --msgbox "Migrated all from this Activity’s old profile."
 	# copy options from the template profile
 	elif [ "${COPY_TYPE}" = "templ" ]; then
 		${KDIALOG} --title "Copy in progress" --passivepopup "Copying data to the new profile" 15
-		cp -a ${TPL_PROF}/* ${NEW_PROF}/
+		cp -a ${TPL_PROF_PATH}/* ${NEW_PROF_PATH}/
 		f_FSyncPrepare
 		echo ">>> Copied all from template profile"
 		${KDIALOG} --msgbox "Copied all from template profile."
 	# copy limited options from the default profile
 	elif [ "${COPY_TYPE}" = "minimal" ]; then
-		cp ${DEF_PROF}/places.sqlite ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/favicons.sqlite ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/key4.db ${NEW_PROF}/			 2>/dev/null
-		cp ${DEF_PROF}/logins.json ${NEW_PROF}/		 2>/dev/null
-		cp ${DEF_PROF}/permissions.sqlite ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/search.json.mozlz4 ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/formhistory.sqlite ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/cookies.sqlite ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/cert9.db ${NEW_PROF}/		 2>/dev/null
-		cp ${DEF_PROF}/handlers.json ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/xulstore.json ${NEW_PROF}/	 2>/dev/null
-		cp ${DEF_PROF}/prefs.js ${NEW_PROF}/		 2>/dev/null
-		cp ${DEF_PROF}/containers.json ${NEW_PROF}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/places.sqlite ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/favicons.sqlite ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/key4.db ${NEW_PROF_PATH}/			 2>/dev/null
+		cp ${DEF_PROF_PATH}/logins.json ${NEW_PROF_PATH}/		 2>/dev/null
+		cp ${DEF_PROF_PATH}/permissions.sqlite ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/search.json.mozlz4 ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/formhistory.sqlite ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/cookies.sqlite ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/cert9.db ${NEW_PROF_PATH}/		 2>/dev/null
+		cp ${DEF_PROF_PATH}/handlers.json ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/xulstore.json ${NEW_PROF_PATH}/	 2>/dev/null
+		cp ${DEF_PROF_PATH}/prefs.js ${NEW_PROF_PATH}/		 2>/dev/null
+		cp ${DEF_PROF_PATH}/containers.json ${NEW_PROF_PATH}/	 2>/dev/null
 		echo ">>> Minimal data set copied"
 		${KDIALOG} --msgbox "Minimal data set copied."
 	# create empty new profile
@@ -248,12 +273,12 @@ else
 		echo ">>> No data need to be copy"
 	# open up help text
 	elif [ "${COPY_TYPE}" = "help" ]; then
-		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 640
+		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 1024
 		exit 0
 	fi
 
-	exec ${FF_BIN} --profile ${NEW_PROF} "$@" &
-	echo ">>> Started the new profile: ${ACTIVITY_PROFILEDIR}"
+	exec ${FF_BIN} --profile ${NEW_PROF_PATH} "$@" &								# Start with the profile with the given path. 
+	echo ">>> Started the new profile: ${ACTIVITY_PROFILENAME}"
 	${KDIALOG} --msgbox "Please re-login to FF Sync."
 fi
 
