@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Fixed
 ### Security
 
+## [0.4.1][] – 2022-10-11
+### Fixed
+- fixed [In 0.4 the Profile migrator is broken!](https://gitlab.com/hook/activity-aware-firefox/-/issues/9)
+
 ## [0.4][] – 2022-10-09
 ### Added
 - added this `CHANGELOG.markdown`
