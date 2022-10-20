@@ -72,7 +72,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - an initial and very basic version of this the `activityfirefox` wrapper and its `.desktop` file as descbired in [my first blog post about it](https://matija.suklje.name/introducing-activity-aware-firefox), it gets the job done, but makes a lot of assumptions – by [@hook][]
 
 
-[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4...HEAD
+[Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4.1...HEAD
+[0.4.1]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4...v0.4.1
 [0.4]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.3...v0.4
 [0.3]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.2...v0.3
 [0.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.1...v0.2
