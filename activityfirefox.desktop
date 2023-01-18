@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 
 [Desktop Entry]
-Categories=Network;WebBrowser;
+Categories=GNOME;GTK;Network;WebBrowser;
 Comment[fr]=Utilise un profile Firefox différent pour chaque activité Plasma
 Comment[sl_SI]=Drži ločen Firefox Profil za vsako Dejavnost
 Comment=Keeps a separate Firefox Profile per each Activity
@@ -28,4 +28,3 @@ X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
 Keywords=Internet;WWW;Browser;Web;Explorer
-Categories=GNOME;GTK;Network;WebBrowser;
