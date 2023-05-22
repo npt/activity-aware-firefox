@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: © 2021 Matija Šuklje <matija@suklje.name>, 2022 Jarosław Czarniak <jaroslaw@czarniak.org>
 
 [Desktop Entry]
-Categories=Network;WebBrowser;
+Categories=GNOME;GTK;Network;WebBrowser;
 Comment[fr]=Utilise un profile Firefox différent pour chaque activité Plasma
 Comment[sl_SI]=Drži ločen Firefox Profil za vsako Dejavnost
 Comment=Keeps a separate Firefox Profile per each Activity
@@ -11,6 +11,7 @@ GenericName[fr]=Navigateur Web avec activités Plasma
 GenericName[sl_SI]=Spletni brskalnik, ki razume KDE Dejavnosti
 GenericName[pl_PL]=Przeglądarka wspierająca aktywności KDE
 GenericName=Activity-aware web browser
+Keywords=Internet;WWW;Browser;Web;Explorer
 Icon=firefox
 InitialPreference=10
 MimeType=text/html;application/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;
@@ -18,14 +19,10 @@ Name[fr]=Firefox avec activités Plasma
 Name[sl_SI]=Firefox, ki razume Dejavnosti
 Name[pl_PL]=Firefox wspierający aktywności KDE
 Name=Activity-aware Firefox
-Path=
 StartupNotify=true
 Terminal=false
-TerminalOptions=
 Type=Application
 X-DBUS-ServiceName=
 X-DBUS-StartupType=
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-Keywords=Internet;WWW;Browser;Web;Explorer
-Categories=GNOME;GTK;Network;WebBrowser;
