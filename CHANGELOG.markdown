@@ -13,17 +13,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased][]
 ### Added
 ### Changed
-
-- `.desktop` file cleaned up and translated to French – by [@Coucouf][]
-
 ### Removed
 ### Deprecated
 ### Fixed
 ### Security
 
+## [0.4.2.][] – 2023-01-20
+### Changed
+
+- `.desktop` file cleaned up and translated to French – by [@Coucouf][]
+- made the executable in `.desktop` file rely on `$PATH` – by [@hook][]
+
+
 ## [0.4.1][] – 2022-10-11
 ### Fixed
 - fixed [In 0.4 the Profile migrator is broken!](https://gitlab.com/hook/activity-aware-firefox/-/issues/9)
+
 
 ## [0.4][] – 2022-10-09
 ### Added
@@ -76,6 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 
 [Unreleased]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4.1...HEAD
+[0.4.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4.1...v0.4.2
 [0.4.1]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.4...v0.4.1
 [0.4]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.3...v0.4
 [0.3]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.2...v0.3

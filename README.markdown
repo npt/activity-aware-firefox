@@ -47,6 +47,14 @@ For summaries of bigger changes and other news, Matija Šuklje has a blog series
 
 # Installation
 
+## From packages
+
+_Activity-aware Firefox_ is packaged for a few distributions already (at least Debian- and Arch-based ones):
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/activity-aware-firefox.svg)](https://repology.org/project/activity-aware-firefox/versions)
+
+## Manual installation
+
 Save the `activityfirefox` script to somewhere in your `$PATH`.
 
 In my case, I saved it to `~/.local/bin/activityfirefox` and have that folder in my `$PATH`.
