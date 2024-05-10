@@ -171,7 +171,7 @@ ACTIVITY_NAME_CURATED=$(gawk -v RS='( |[^[:alnum:]-])+' '{printf "%s", sep $0; s
 
 FF_SYNC_NAME="${ACTIVITY_NAME} @ ${HOSTNAME}"
 ACTIVITY_PROFILENAME="${ACTIVITY_NAME_CURATED}_${ACTIVITY_UUID}"
-echo ">>> ${ACTIVITY_NAME_CURATED}"
+# echo ">>> ${ACTIVITY_NAME_CURATED}"
 
 ## Default profile
 DEF_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.default-release")
@@ -194,7 +194,7 @@ NEW_PROF_PATH="${FF_FOLDER}/${NEW_PROF_DIRNAME}"									# ex: /home/XYZ/.mozill
 
 if [ -d ${NEW_PROF_PATH} ]; then													## A profile already exist
 	exec ${FF_BIN} --profile ${NEW_PROF_PATH} "$@" &								# Start with the profile with the given path. 
-	echo ">>> Started an existing profile: ${ACTIVITY_PROFILENAME}"
+	# echo ">>> Started an existing profile: ${ACTIVITY_PROFILENAME}"
 else
 	# noop option is used only as a visual separator
 	WINW=320
