@@ -71,34 +71,6 @@ function f_GenHelp()
 	echo -ne ${HELP} > ${FF_FOLDER}/activityfirefox.help
 }
 
-function f_DeleteUnusedProfile()
-{
-	cd "${FF_FOLDER}" || exit
-	for PROFILE_DIR in $(set +f;ls -d ????????.*_????????-????-????-????-????????????); do
-		PROFILE_ID=$(cut -f2 -d'_' <<< "${PROFILE_DIR}")
-		PROFILE_NAME=$(cut -f1 -d'_' <<< "${PROFILE_DIR}"| cut -f2 -d'.')
-		ACTIVITY_STATE=$(qdbus org.kde.ActivityManager /ActivityManager/Activities ActivityState "${PROFILE_ID}")
-		if [ "${ACTIVITY_STATE}" = "0" ];then
-			${KDIALOG} --title "Missing Activity" --warningyesno "Activity ${PROFILE_NAME} doesn't exists anymore.\nRemove unused FF profile directory?\n(${PROFILE_DIR})"
-			if [ $? -eq 0 ]; then	# yes
-				if [ $GIO_EXISTS -eq 1 ]; then
-					# move profile dir to trash
-					gio trash "${PROFILE_DIR}" || true
-				else
-					# more direct approach. move profile dir to trash manually
-					mv -f "${FF_FOLDER}/${PROFILE_DIR}" "${HOME}/.local/share/Trash/files"
-				fi
-				# get profile section name with matching "Name" value
-				SECTION_NAME=$(awk '/\[Profile[0-9]*\]/ {label=$0} /Name='${PROFILE_NAME}'_'${PROFILE_ID}'/ {print label}' "${FF_FOLDER}/profiles.ini"|tr -cd '[:alnum:]')
-				# remove section from profiles file
-				if [ "${SECTION_NAME}" != "" ]; then
-					gawk -i inplace '/^\[Profile/{if($0~/\['${SECTION_NAME}'\]/){found=1}else{found=""}} !found' "${FF_FOLDER}/profiles.ini"
-				fi
-			fi
-		fi
-	done
-}
-
 function f_CheckAndPrepare()
 {
 	## Template profile path can be used for profile copying.
@@ -162,7 +134,6 @@ function f_GetDirName()
 f_GenHelp
 f_CheckDeps
 f_CheckAndPrepare
-f_DeleteUnusedProfile
 
 ACTIVITY_UUID=$(qdbus org.kde.ActivityManager /ActivityManager/Activities CurrentActivity)
 ## Remove all (but '-') non alphanumeric characters from the activity name
