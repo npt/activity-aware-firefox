@@ -105,13 +105,6 @@ function f_CheckDeps()
 		exit 1
 	fi
 
-	#check if gio cmd exists on a system
-	GIO_EXISTS=0
-	command -v gio > /dev/null 2>&1
-	if (( $? == 0 )) ; then
-		GIO_EXISTS=1
-	fi
-
 	#check if kdialog exists on a system
 	command -v kdialog > /dev/null 2>&1
 	if (( $? != 0 )) ; then
