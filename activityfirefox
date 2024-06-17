@@ -97,9 +97,8 @@ function f_FSyncPrepare()
 
 function f_CheckDeps()
 {
-	FF_BIN=$(which firefox)
-	## Not the most secure way to check for firefox existence but it does its job
-	if [ $? -ne 0 ]; then
+	FF_BIN=/usr/local/opt/firefox/firefox
+	if [ ! -x $FF_BIN ]; then
 		echo ">>> Could not locate firefox executable"
 		${KDIALOG} --error "Could not locate firefox executable"
 		exit 1
