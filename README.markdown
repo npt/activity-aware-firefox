@@ -122,11 +122,24 @@ On launch `activityfirefox` will automatically search for any stale Firefox Prof
 **NB:** the script intentionally does not touch any Profiles that were _not_ created by `activityfirefox`. The best way to clean those out is to manage your existing Profiles through the means of `firefox --ProfileManager`.
 
 
-# Caveats
+# General caveats and work-arounds
 
-There are some caveats, of course:
+As with any hack, are a few caveats, of course:
 
-The biggest annoyance is that due to the fact that [Firefox kills itself if it has been sleeping for a certain period of time][ff_stop] after receiving e.g. `SIGSTOP`, if you resume a stopped Activity, Firefox will start with the default profile. You need to close that window and simply start “Activity-aware Firefox” and it will come back as expected.
+
+## On session or Activity (re)start, Firefox
+
+The biggest annoyance is that due to the fact that [Firefox kills itself if it has been sleeping for a certain period of time][ff_stop] after receiving e.g. `SIGSTOP`, if you resume a stopped Activity, Firefox will start with the default profile. This can be quite annoying, especially when several Activities are running.
+
+To work around this issue, it is suggested to make sure Firefox does not automatically launch. In Plasma 6 you can do so by:
+
+1. open KDE Plasma _System Settings_ (`systemsettings`)
+1. in the _Session_ module
+1. go to _Desktop Session_ and there
+1. under _Ignored applications_ add the following into the text field: `activityfirefox,firefox`
+
+
+## Separate profiles = separate settings
 
 A limitation of this script is that add-ons, bookmarks, settings, etc. are _not_ copied (except for `chrome/`) – I suggest using [Firefox Sync][sync] to sync all of this between Firefox Profiles. This is is also needed if you want to move tabs between Profiles/Activities.
 
