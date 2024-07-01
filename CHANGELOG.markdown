@@ -13,12 +13,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased][]
 ### Added
 ### Changed
+
+- improved `README.markdown` to include a work-around for auto-starting default profiles
+
 ### Removed
 ### Deprecated
 ### Fixed
 ### Security
 
-## [0.4.2.][] – 2023-01-20
+## [0.4.2][] – 2023-01-20
 ### Changed
 
 - `.desktop` file cleaned up and translated to French – by [@Coucouf][]
@@ -88,6 +91,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 [0.2]: https://gitlab.com/hook/activity-aware-firefox/-/compare/v0.1...v0.2
 [0.1]: https://gitlab.com/hook/activity-aware-firefox/-/tree/v0.1
 
+[@Coucouf]: https://gitlab.com/Coucouf
 [@Sir_Yaro]: https://gitlab.com/Sir_Yaro
 [@Cristian_Le]: https://gitlab.com/LecrisUT
 [@hook]: https://gitlab.com/hook
