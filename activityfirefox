@@ -123,7 +123,6 @@ function f_GetDirName()
 }
 
 
-f_GenHelp
 f_CheckDeps
 f_CheckAndPrepare
 
@@ -236,6 +235,7 @@ else
 		echo ">>> No data need to be copy"
 	# open up help text
 	elif [ "${COPY_TYPE}" = "help" ]; then
+		f_GenHelp
 		kdialog --title "Help" --textbox ${FF_FOLDER}/activityfirefox.help 1024 1024
 		exit 0
 	fi
