@@ -17,8 +17,6 @@ KDIALOG="kdialog --icon firefox"
 # I always want this set
 export MOZ_USE_XINPUT2=1
 
-W=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f1 -d'x')
-H=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f2 -d'x')
 
 set +f	# enable wildcard expansion if disabled
 if [ "$1" == "-x" ];then
@@ -165,6 +163,8 @@ else
 	# noop option is used only as a visual separator
 	WINW=320
 	WINH=320
+	W=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f1 -d'x')
+	H=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f2 -d'x')
 	GEO="${WINW}x${WINH}+$((${W}/2-${WINW}/2))+$((${H}/2-${WINH}/2))"
 	COPY_TYPE=$(${KDIALOG} --geometry "${GEO}" --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile" noop "__________________________________" help "[Help me decide]")
 
