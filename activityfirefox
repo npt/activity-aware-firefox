@@ -151,7 +151,6 @@ if [ ! -d ${DEF_PROF_PATH} ]; then
 		exit 1
 	fi
 fi
-DEF_PROF_SIZE="$(du -hs ${DEF_PROF_PATH} | cut -f1)B"
 
 ## Desired profile path of the current activity, ???????? indicate randomly generated firefox names
 NEW_PROF_DIRNAME=$(f_GetDirName "${FF_FOLDER}/????????.${ACTIVITY_PROFILENAME}")	# ex: ky10cbmo.test_9936a864-799e-4393-a93c-12c3b980272c 
@@ -167,6 +166,7 @@ else
 	W=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f1 -d'x')
 	H=$(xdpyinfo | awk '/dimensions/{print $2}'|cut -f2 -d'x')
 	GEO="${WINW}x${WINH}+$((${W}/2-${WINW}/2))+$((${H}/2-${WINH}/2))"
+	DEF_PROF_SIZE="$(du -hs ${DEF_PROF_PATH} | cut -f1)B"
 	COPY_TYPE=$(${KDIALOG} --geometry "${GEO}" --menu "Select new profile type:" new "New profile (0MB)" minimal "Minimal copy (< 3MB)" templ "Template profile copy (${TPL_PROF_SIZE})" full "Full copy (${DEF_PROF_SIZE})" old "Migrate from pre-0.3 profile" noop "__________________________________" help "[Help me decide]")
 
 	# cancel. do nothing and exit.
